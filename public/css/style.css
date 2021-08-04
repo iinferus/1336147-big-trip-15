@@ -643,7 +643,8 @@ main {
           user-select: none;
   cursor: pointer;
   -webkit-transition: color 0.2s;
-  transition: color 0.2s; }
+  transition: color 0.2s;
+  text-transform: capitalize; }
   .event__type-label::before {
     content: "";
     position: absolute;
