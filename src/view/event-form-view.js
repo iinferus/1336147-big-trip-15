@@ -1,12 +1,12 @@
 const getTypes = (dataTypes) => {
   let typesTemplate = '';
-  for (const type in dataTypes) {
+  dataTypes.forEach((type) => {
     typesTemplate += `
     <div class="event__type-item">
-      <input id="event-type-${dataTypes[type].type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${dataTypes[type].type}">
-      <label class="event__type-label  event__type-label--${dataTypes[type].type}" for="event-type-${dataTypes[type].type}-1">${dataTypes[type].type}</label>
+      <input id="event-type-${type.type}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type.type}">
+      <label class="event__type-label  event__type-label--${type.type}" for="event-type-${type.type}-1">${type.type}</label>
     </div>`;
-  }
+  });
   return typesTemplate;
 };
 
@@ -28,11 +28,11 @@ const getEventType = (dataPoint, dataTypes) =>
 
 const getDestinationTemplate = (dataDestinations) => {
   let destinationTemplate = '';
-  for (const destination in dataDestinations) {
+  dataDestinations.forEach((destination) => {
     destinationTemplate += `
-      <option value="${dataDestinations[destination].name}"></option>
+      <option value="${destination.name}"></option>
     `;
-  }
+  });
   return destinationTemplate;
 };
 
@@ -45,8 +45,8 @@ const getOffers = (dataPoint, dataTypes) => {
     for (const offer in typeOfferArray[i].offers) {
       offersTemplate += `
     <div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage">
-      <label class="event__offer-label" for="event-offer-luggage-1">
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${typeOfferArray[i].offers[offer].title.split(' ').join('-')}" type="checkbox" name="event-offer-${typeOfferArray[i].offers[offer].title.split(' ').join('-')}">
+      <label class="event__offer-label" for="event-offer-${typeOfferArray[i].offers[offer].title.split(' ').join('-')}">
         <span class="event__offer-title">${typeOfferArray[i].offers[offer].title}</span>
         &plus;&euro;&nbsp;
         <span class="event__offer-price">${typeOfferArray[i].offers[offer].price}</span>

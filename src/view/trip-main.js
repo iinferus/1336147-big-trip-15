@@ -1,6 +1,8 @@
+const MAX_COUNT_DESTIONATION = 3;
+
 export const createTripMainInfo = (data) => {
   const title = [];
-  if (data.length <= 3) {
+  if (data.length <= MAX_COUNT_DESTIONATION) {
     data.forEach((element) => {
       title.push(element.destination);
     });

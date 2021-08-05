@@ -2,14 +2,14 @@ import {getDurationDates} from '../utils.js';
 
 const getOffers = (data) => {
   let offersTemplate = '';
-  for (const offer in data) {
+  data.forEach((offer) =>{
     offersTemplate += `
     <li class="event__offer">
-      <span class="event__offer-title">${data[offer].title}</span>
+      <span class="event__offer-title">${offer.title}</span>
       &plus;&euro;&nbsp;
-      <span class="event__offer-price">${data[offer].price}</span>
+      <span class="event__offer-price">${offer.price}</span>
     </li>`;
-  }
+  });
   return offersTemplate;
 };
 
