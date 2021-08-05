@@ -12,7 +12,7 @@ const generatePicture = () => ({
 });
 
 
-const genereateDestinationsArray = () => {
+const createDestinationsArray = () => {
   const destinationsArray = [];
   CITIES_LIBRARY.forEach((city) => {
     destinationsArray.push({
@@ -24,4 +24,4 @@ const genereateDestinationsArray = () => {
   return destinationsArray;
 };
 
-export {genereateDestinationsArray};
+export {createDestinationsArray};
