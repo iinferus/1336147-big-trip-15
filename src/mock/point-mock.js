@@ -1,5 +1,5 @@
 import {createTypesArray} from './offer-mock';
-import {createTDestinationsArray} from './destination-mock.js';
+import {createDestinationsArray} from './destination-mock.js';
 import {getRandomInteger, getRandomArrayElement} from '../utils.js';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc.js';
@@ -26,14 +26,14 @@ const generatePoint = () => {
     dateFrom: dayjs.min(dayjs(), genearateDate().dateFrom, genearateDate().dateTo),
     dateTo: dayjs.max(dayjs(), genearateDate().dateFrom, genearateDate().dateTo),
     isFavorite: Boolean(getRandomInteger(0, 1)),
-    destination: getRandomArrayElement(createTDestinationsArray()).name,
+    destination: getRandomArrayElement(createDestinationsArray()).name,
     offers: offersArray.offers,
     type: offersArray.type,
   };
 };
 
 const createPointsArray = new Array(getRandomInteger(15, 20)).fill().map(() => generatePoint());
-export const sortedPointsArray = createPointsArray.sort((a, b) => {
+export const sortedPoints = createPointsArray.sort((a, b) => {
   if (a.dateFrom.diff(b.dateFrom) > 1) {
     return 1;
   }
