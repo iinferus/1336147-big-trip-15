@@ -1,5 +1,5 @@
-import {createTypesArray} from './offer-mock';
-import {createDestinationsArray} from './destination-mock.js';
+import {createTypes} from './offer-mock';
+import {createDestinations} from './destination-mock.js';
 import {getRandomInteger, getRandomArrayElement} from '../utils.js';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc.js';
@@ -20,26 +20,17 @@ const genearateDate = () => {
 };
 
 const generatePoint = () => {
-  const offersArray = getRandomArrayElement(createTypesArray());
+  const offers = getRandomArrayElement(createTypes());
   return {
     basePrice: getRandomInteger(10, 1000),
     dateFrom: dayjs.min(dayjs(), genearateDate().dateFrom, genearateDate().dateTo),
     dateTo: dayjs.max(dayjs(), genearateDate().dateFrom, genearateDate().dateTo),
     isFavorite: Boolean(getRandomInteger(0, 1)),
-    destination: getRandomArrayElement(createDestinationsArray()).name,
-    offers: offersArray.offers,
-    type: offersArray.type,
+    destination: getRandomArrayElement(createDestinations()).name,
+    offers: offers.offers,
+    type: offers.type,
   };
 };
 
-const createPointsArray = new Array(getRandomInteger(15, 20)).fill().map(() => generatePoint());
-export const sortedPoints = createPointsArray.sort((a, b) => {
-  if (a.dateFrom.diff(b.dateFrom) > 1) {
-    return 1;
-  }
-  if (a.dateFrom.diff(b.dateFrom) < 1) {
-    return -1;
-  }
-  return 0;
-});
+export const createPoints = new Array(getRandomInteger(15, 20)).fill().map(() => generatePoint());
 

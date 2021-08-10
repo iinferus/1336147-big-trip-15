@@ -9,15 +9,15 @@ const generateOffer = () => ({
   price: getRandomInteger(10, 500),
 });
 
-const createTypesArray = () => {
-  const typesArray = [];
+const createTypes = () => {
+  const types = [];
   TYPES_LIBRARY.forEach((typeName) => {
-    typesArray.push({
+    types.push({
       type: typeName,
       offers: new Array(getRandomInteger(0, 5)).fill().map(() => generateOffer()),
     });
   });
-  return typesArray;
+  return types;
 };
 
-export {createTypesArray};
+export {createTypes};

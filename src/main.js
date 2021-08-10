@@ -4,9 +4,19 @@ import {createTripFilter} from './view/filter-view.js';
 import {createTripSort} from './view/sort-view.js';
 import {createEvent} from './view/trip-list-view.js';
 import {createEventForm} from './view/event-form-view.js';
-import {sortedPoints} from './mock/point-mock.js';
-import {createTypesArray} from './mock/offer-mock.js';
-import {createDestinationsArray} from './mock/destination-mock.js';
+import {createPoints} from './mock/point-mock.js';
+import {createTypes} from './mock/offer-mock.js';
+import {createDestinations} from './mock/destination-mock.js';
+
+const sortedPoints = createPoints.sort((a, b) => {
+  if (a.dateFrom.diff(b.dateFrom) > 1) {
+    return 1;
+  }
+  if (a.dateFrom.diff(b.dateFrom) < 1) {
+    return -1;
+  }
+  return 0;
+});
 
 const tripMain = document.querySelector('.trip-main');
 const tripEvents = document.querySelector('.trip-events');
@@ -28,4 +38,4 @@ sortedPoints.forEach((element) => {
   render(tripList, createEvent(element), 'beforeend');
 });
 
-render(tripList, createEventForm(sortedPoints[0],createTypesArray(),createDestinationsArray(),false), 'afterbegin');
+render(tripList, createEventForm(sortedPoints[0],createTypes(),createDestinations(),false), 'afterbegin');

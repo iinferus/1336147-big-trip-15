@@ -12,16 +12,16 @@ const generatePicture = () => ({
 });
 
 
-const createDestinationsArray = () => {
-  const destinationsArray = [];
+const createDestinations = () => {
+  const destinations = [];
   CITIES_LIBRARY.forEach((city) => {
-    destinationsArray.push({
+    destinations.push({
       name: city,
       description: Object.values(getRandomMultipleArrayElement(DESCRIPTIONS_LIBRARY)).join(' '),
       pictures: new Array(getRandomInteger(1, 5)).fill().map(() => generatePicture()),
     });
   });
-  return destinationsArray;
+  return destinations;
 };
 
-export {createDestinationsArray};
+export {createDestinations};
