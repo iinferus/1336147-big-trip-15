@@ -4,8 +4,19 @@ import {createTripFilter} from './view/filter-view.js';
 import {createTripSort} from './view/sort-view.js';
 import {createEvent} from './view/trip-list-view.js';
 import {createEventForm} from './view/event-form-view.js';
+import {createPoints} from './mock/point-mock.js';
+import {createTypes} from './mock/offer-mock.js';
+import {createDestinations} from './mock/destination-mock.js';
 
-const EVENT_COUNT = 3;
+const sortedPoints = createPoints.sort((a, b) => {
+  if (a.dateFrom.diff(b.dateFrom) > 1) {
+    return 1;
+  }
+  if (a.dateFrom.diff(b.dateFrom) < 1) {
+    return -1;
+  }
+  return 0;
+});
 
 const tripMain = document.querySelector('.trip-main');
 const tripEvents = document.querySelector('.trip-events');
@@ -16,15 +27,15 @@ const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
 };
 
-render(tripMain, createTripMainInfo(), 'afterbegin');
+render(tripMain, createTripMainInfo(sortedPoints), 'afterbegin');
 render(tripMenu, createTripMenu(), 'beforeend');
 render(tripFilter, createTripFilter(), 'beforeend');
 render(tripEvents, createTripSort(), 'beforeend');
 
 const tripList = tripEvents.querySelector('.trip-events__list');
 
-for (let i = 0; i < EVENT_COUNT; i++) {
-  render(tripList, createEvent(), 'beforeend');
-}
+sortedPoints.forEach((element) => {
+  render(tripList, createEvent(element), 'beforeend');
+});
 
-render(tripList, createEventForm(false), 'afterbegin');
+render(tripList, createEventForm(sortedPoints[0],createTypes(),createDestinations(),false), 'afterbegin');
