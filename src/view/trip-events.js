@@ -1,20 +1,17 @@
-
 import {createElement} from '../utils.js';
 
-const createTripMenu = () => (
-  `<nav class="trip-controls__trip-tabs  trip-tabs">
-    <a class="trip-tabs__btn  trip-tabs__btn--active" href="#">Table</a>
-    <a class="trip-tabs__btn" href="#">Stats</a>
-  </nav>`
+const createTripEventsList = () => (
+  `<ul class="trip-events__list">
+  </ul>`
 );
 
-export default class TripMenu {
+export default class TripEventsList {
   constructor() {
     this._element = null;
   }
 
   getTemplate() {
-    return createTripMenu();
+    return createTripEventsList(this._points);
   }
 
   getElement() {

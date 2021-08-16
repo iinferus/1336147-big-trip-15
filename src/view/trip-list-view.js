@@ -1,8 +1,8 @@
-import {getDurationDates} from '../utils.js';
+import {getDurationDates, createListElement} from '../utils.js';
 
-const getOffers = (data) => {
+const getOffers = (trip) => {
   let offersTemplate = '';
-  data.forEach((offer) =>{
+  trip.forEach((offer) =>{
     offersTemplate += `
     <li class="event__offer">
       <span class="event__offer-title">${offer.title}</span>
@@ -13,30 +13,30 @@ const getOffers = (data) => {
   return offersTemplate;
 };
 
-export const createEvent = (data) => (`
+const createEvent = (trip) => (`
 <li class="trip-events__item">
 <div class="event">
-  <time class="event__date" datetime="${data.dateFrom.format('YYYY-MM-DD')}">${
-    data.dateFrom.format('MMM D')}</time>
+  <time class="event__date" datetime="${trip.dateFrom.format('YYYY-MM-DD')}">${
+    trip.dateFrom.format('MMM D')}</time>
   <div class="event__type">
-    <img class="event__type-icon" width="42" height="42" src="img/icons/${data.type}.png" alt="Event type icon">
+    <img class="event__type-icon" width="42" height="42" src="img/icons/${trip.type}.png" alt="Event type icon">
   </div>
-  <h3 class="event__title">${data.type} ${data.destination}</h3>
+  <h3 class="event__title">${trip.type} ${trip.destination}</h3>
   <div class="event__schedule">
     <p class="event__time">
-      <time class="event__start-time" datetime="${data.dateFrom.format()}">${data.dateFrom.format('HH:mm')}</time>
+      <time class="event__start-time" datetime="${trip.dateFrom.format()}">${trip.dateFrom.format('HH:mm')}</time>
       &mdash;
-      <time class="event__end-time" datetime="${data.dateTo.format()}">${data.dateTo.format('HH:mm')}</time>
+      <time class="event__end-time" datetime="${trip.dateTo.format()}">${trip.dateTo.format('HH:mm')}</time>
     </p>
-    <p class="event__duration">${getDurationDates(data.dateFrom, data.dateTo)}</p>
+    <p class="event__duration">${getDurationDates(trip.dateFrom, trip.dateTo)}</p>
   </div>
   <p class="event__price">
-    &euro;&nbsp;<span class="event__price-value">${data.basePrice}</span>
+    &euro;&nbsp;<span class="event__price-value">${trip.basePrice}</span>
   </p>
-  ${data.offers.length > 0 ? `<h4 class="visually-hidden">Offers:</h4><ul class="event__selected-offers">
-    ${getOffers(data.offers)}
+  ${trip.offers.length > 0 ? `<h4 class="visually-hidden">Offers:</h4><ul class="event__selected-offers">
+    ${getOffers(trip.offers)}
   </ul>`: ''}
-  <button class="event__favorite-btn event__favorite-btn${data.isFavorite ? '--active' : ''}" type="button">
+  <button class="event__favorite-btn event__favorite-btn${trip.isFavorite ? '--active' : ''}" type="button">
     <span class="visually-hidden">Add to favorite</span>
     <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
       <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
@@ -48,3 +48,26 @@ export const createEvent = (data) => (`
 </div>
 </li>
 `);
+
+export default class TripEvent {
+  constructor(trip) {
+    this._element = null;
+    this._trip = trip;
+  }
+
+  getTemplate() {
+    return createEvent(this._trip);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createListElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

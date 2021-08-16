@@ -6,6 +6,10 @@ dayjs.extend(utc);
 dayjs.extend(minMax);
 dayjs.extend(duration);
 
+const RenderPosition = {
+  AFTERBEGIN: 'afterbegin',
+  BEFOREEND: 'beforeend',
+};
 
 const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -42,5 +46,29 @@ const getDurationDates = (dateStart, dateFinish) => {
   }
 };
 
+const renderElement = (container, element, place) => {
+  switch (place) {
+    case RenderPosition.AFTERBEGIN:
+      container.prepend(element);
+      break;
+    case RenderPosition.BEFOREEND:
+      container.append(element);
+      break;
+  }
+};
 
-export {getRandomInteger, getRandomArrayElement, getRandomMultipleArrayElement, getDurationDates};
+const createElement = (template) => {
+  const newElement = document.createElement('div'); // 1
+  newElement.innerHTML = template;
+
+  return newElement.firstChild; // 3
+};
+
+const createListElement = (template) => {
+  const newElement = document.createElement('li');
+  newElement.innerHTML = template;
+
+  return newElement;
+};
+
+export {getRandomInteger, getRandomArrayElement, getRandomMultipleArrayElement, getDurationDates, createElement, RenderPosition, renderElement, createListElement};
