@@ -1,6 +1,8 @@
+import {createElement} from '../utils.js';
+
 const MAX_COUNT_DESTINATION = 3;
 
-export const createTripMainInfo = (data) => {
+const createTripMainInfo = (data) => {
   const title = [];
   if (data.length <= MAX_COUNT_DESTINATION) {
     data.forEach((element) => {
@@ -28,3 +30,26 @@ export const createTripMainInfo = (data) => {
     </p>
   </section>`;
 };
+
+export default class TripMain {
+  constructor(points) {
+    this._element = null;
+    this._points = points;
+  }
+
+  getTemplate() {
+    return createTripMainInfo(this._points);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

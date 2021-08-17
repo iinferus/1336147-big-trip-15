@@ -1,12 +1,14 @@
-import {createTripMainInfo} from './view/trip-main.js';
-import {createTripMenu} from './view/menu-view.js';
-import {createTripFilter} from './view/filter-view.js';
-import {createTripSort} from './view/sort-view.js';
-import {createEvent} from './view/trip-list-view.js';
-import {createEventForm} from './view/event-form-view.js';
+import TripMain from './view/trip-main.js';
+import TripMenu from './view/menu-view.js';
+import TripEventsListView from './view/trip-events.js';
+import TripFilter from './view/filter-view.js';
+import TripSortView from './view/sort-view.js';
+import TripEventView from './view/trip-list-view.js';
+import EventFormView from './view/event-form-view.js';
 import {createPoints} from './mock/point-mock.js';
-import {createTypes} from './mock/offer-mock.js';
+import {RenderPosition, renderElement} from './utils.js';
 import {createDestinations} from './mock/destination-mock.js';
+import {createTypes} from './mock/offer-mock.js';
 
 const sortedPoints = createPoints.sort((a, b) => {
   if (a.dateFrom.diff(b.dateFrom) > 1) {
@@ -18,24 +20,57 @@ const sortedPoints = createPoints.sort((a, b) => {
   return 0;
 });
 
+const renderTripEvent = (tripListElement, trip, dataTypes, dataDestinations) => {
+  const tripComponent = new TripEventView(trip);
+  const tripEditComponent = new EventFormView(trip, dataTypes, dataDestinations);
+
+  const replaceCardToForm = () => {
+    tripListElement.replaceChild(tripEditComponent.getElement(), tripComponent.getElement());
+  };
+
+  const replaceFormToCard = () => {
+    tripListElement.replaceChild(tripComponent.getElement(), tripEditComponent.getElement());
+  };
+
+  const onEscKeyDown = (evt) => {
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
+      evt.preventDefault();
+      replaceFormToCard();
+      document.removeEventListener('keydown', onEscKeyDown);
+    }
+  };
+
+  tripComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', () => {
+    replaceCardToForm();
+    document.addEventListener('keydown', onEscKeyDown);
+  });
+
+  tripEditComponent.getElement().querySelector('form').addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    replaceFormToCard();
+    document.removeEventListener('keydown', onEscKeyDown);
+  });
+
+  tripEditComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', () => {
+    replaceFormToCard();
+    document.removeEventListener('keydown', onEscKeyDown);
+  });
+
+  renderElement(tripListElement, tripComponent.getElement(), RenderPosition.BEFOREEND);
+};
+
 const tripMain = document.querySelector('.trip-main');
 const tripEvents = document.querySelector('.trip-events');
 const tripMenu = tripMain.querySelector('.trip-controls__navigation');
 const tripFilter = tripMain.querySelector('.trip-controls__filters');
 
-const render = (container, template, place) => {
-  container.insertAdjacentHTML(place, template);
-};
+const tripList = new TripEventsListView().getElement();
+renderElement(tripMain, new TripMain(sortedPoints).getElement(), RenderPosition.AFTERBEGIN);
+renderElement(tripMenu, new TripMenu().getElement(), RenderPosition.BEFOREEND);
+renderElement(tripFilter, new TripFilter().getElement(), RenderPosition.BEFOREEND);
+renderElement(tripEvents, tripList, RenderPosition.BEFOREEND);
+renderElement(tripEvents, new TripSortView().getElement(), RenderPosition.AFTERBEGIN);
 
-render(tripMain, createTripMainInfo(sortedPoints), 'afterbegin');
-render(tripMenu, createTripMenu(), 'beforeend');
-render(tripFilter, createTripFilter(), 'beforeend');
-render(tripEvents, createTripSort(), 'beforeend');
-
-const tripList = tripEvents.querySelector('.trip-events__list');
-
-sortedPoints.forEach((element) => {
-  render(tripList, createEvent(element), 'beforeend');
+sortedPoints.forEach((trip) => {
+  renderTripEvent(tripList, trip, createTypes(), createDestinations());
 });
-
-render(tripList, createEventForm(sortedPoints[0],createTypes(),createDestinations(),false), 'afterbegin');
