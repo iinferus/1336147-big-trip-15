@@ -5,6 +5,7 @@ import TripFilter from './view/filter-view.js';
 import TripSortView from './view/sort-view.js';
 import TripEventView from './view/trip-list-view.js';
 import EventFormView from './view/event-form-view.js';
+import NoTripView from './view/no-trip.js';
 import {createPoints} from './mock/point-mock.js';
 import {RenderPosition, renderElement} from './utils.js';
 import {createDestinations} from './mock/destination-mock.js';
@@ -63,14 +64,19 @@ const tripMain = document.querySelector('.trip-main');
 const tripEvents = document.querySelector('.trip-events');
 const tripMenu = tripMain.querySelector('.trip-controls__navigation');
 const tripFilter = tripMain.querySelector('.trip-controls__filters');
-
 const tripList = new TripEventsListView().getElement();
-renderElement(tripMain, new TripMain(sortedPoints).getElement(), RenderPosition.AFTERBEGIN);
+
+
+if (sortedPoints.length === 0) {
+  renderElement(tripEvents, new NoTripView().getElement(), RenderPosition.BEFOREEND);
+} else {
+  renderElement(tripMain, new TripMain(sortedPoints).getElement(), RenderPosition.AFTERBEGIN);
+  renderElement(tripEvents, tripList, RenderPosition.BEFOREEND);
+  renderElement(tripEvents, new TripSortView().getElement(), RenderPosition.AFTERBEGIN);
+  sortedPoints.forEach((trip) => {
+    renderTripEvent(tripList, trip, createTypes(), createDestinations());
+  });
+}
+
 renderElement(tripMenu, new TripMenu().getElement(), RenderPosition.BEFOREEND);
 renderElement(tripFilter, new TripFilter().getElement(), RenderPosition.BEFOREEND);
-renderElement(tripEvents, tripList, RenderPosition.BEFOREEND);
-renderElement(tripEvents, new TripSortView().getElement(), RenderPosition.AFTERBEGIN);
-
-sortedPoints.forEach((trip) => {
-  renderTripEvent(tripList, trip, createTypes(), createDestinations());
-});
