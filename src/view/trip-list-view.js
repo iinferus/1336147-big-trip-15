@@ -13,6 +13,17 @@ const getOffers = (trip) => {
   return offersTemplate;
 };
 
+const getTitle = (trip) => {
+  let pretextTitle = 'to';
+  if (trip.type.includes('sightseeing') || trip.type.includes('restaurant')) {
+    pretextTitle = 'in';
+  }
+  if (trip.type.includes('check-in')) {
+    pretextTitle = 'at';
+  }
+  return pretextTitle;
+};
+
 const createEvent = (trip) => (`
 <li class="trip-events__item">
 <div class="event">
@@ -21,7 +32,7 @@ const createEvent = (trip) => (`
   <div class="event__type">
     <img class="event__type-icon" width="42" height="42" src="img/icons/${trip.type}.png" alt="Event type icon">
   </div>
-  <h3 class="event__title">${trip.type} ${trip.destination}</h3>
+  <h3 class="event__title">${trip.type} ${getTitle(trip)} ${trip.destination}</h3>
   <div class="event__schedule">
     <p class="event__time">
       <time class="event__start-time" datetime="${trip.dateFrom.format()}">${trip.dateFrom.format('HH:mm')}</time>

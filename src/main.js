@@ -7,6 +7,8 @@ import TripEventView from './view/trip-list-view.js';
 import EventFormView from './view/event-form-view.js';
 import {createPoints} from './mock/point-mock.js';
 import {RenderPosition, renderElement} from './utils.js';
+import {createDestinations} from './mock/destination-mock.js';
+import {createTypes} from './mock/offer-mock.js';
 
 const sortedPoints = createPoints.sort((a, b) => {
   if (a.dateFrom.diff(b.dateFrom) > 1) {
@@ -18,9 +20,9 @@ const sortedPoints = createPoints.sort((a, b) => {
   return 0;
 });
 
-const renderTripEvent = (tripListElement, trip) => {
+const renderTripEvent = (tripListElement, trip, dataTypes, dataDestinations) => {
   const tripComponent = new TripEventView(trip);
-  const tripEditComponent = new EventFormView(trip);
+  const tripEditComponent = new EventFormView(trip, dataTypes, dataDestinations);
 
   const replaceCardToForm = () => {
     tripListElement.replaceChild(tripEditComponent.getElement(), tripComponent.getElement());
@@ -70,5 +72,5 @@ renderElement(tripEvents, tripList, RenderPosition.BEFOREEND);
 renderElement(tripEvents, new TripSortView().getElement(), RenderPosition.AFTERBEGIN);
 
 sortedPoints.forEach((trip) => {
-  renderTripEvent(tripList, trip);
+  renderTripEvent(tripList, trip, createTypes(), createDestinations());
 });

@@ -1,11 +1,6 @@
-import {createDestinations} from '../mock/destination-mock.js';
-import {createTypes} from '../mock/offer-mock.js';
 import {createListElement} from '../utils.js';
 
-const dataTypes = createTypes();
-const dataDestinations = createDestinations();
-
-const getTypes = () => {
+const getTypes = (dataTypes) => {
   let typesTemplate = '';
   dataTypes.forEach((type) => {
     typesTemplate += `
@@ -17,7 +12,7 @@ const getTypes = () => {
   return typesTemplate;
 };
 
-const getEventType = (dataPoint) =>
+const getEventType = (dataPoint, dataTypes) =>
   `<div class="event__type-wrapper">
   <label class="event__type  event__type-btn" for="event-type-toggle-1">
     <span class="visually-hidden">Choose event type</span>
@@ -27,12 +22,12 @@ const getEventType = (dataPoint) =>
   <div class="event__type-list">
     <fieldset class="event__type-group">
       <legend class="visually-hidden">Event type</legend>
-      ${getTypes()}
+      ${getTypes(dataTypes)}
     </fieldset>
   </div>
 </div>`;
 
-const getDestinationTemplate = () => {
+const getDestinationTemplate = (dataDestinations) => {
   let destinationTemplate = '';
   dataDestinations.forEach((destination) => {
     destinationTemplate += `
@@ -42,7 +37,7 @@ const getDestinationTemplate = () => {
   return destinationTemplate;
 };
 
-const getOffers = (dataPoint) => {
+const getOffers = (dataPoint, dataTypes) => {
   let offersTemplate = '';
   const typeOfferArray = dataTypes
     .slice()
@@ -64,7 +59,7 @@ const getOffers = (dataPoint) => {
   return offersTemplate;
 };
 
-const getDestinationPhotos = (dataPoint) => {
+const getDestinationPhotos = (dataPoint, dataDestinations) => {
   let photosTemplate = '';
   const destinaitonArray = dataDestinations
     .slice()
@@ -79,11 +74,13 @@ const getDestinationPhotos = (dataPoint) => {
 
 const createEventForm = (
   dataPoint,
+  dataTypes,
+  dataDestinations,
   isCreate = false,
 ) => `
 <form class="event event--edit" action="#" method="post">
   <header class="event__header">
-    ${getEventType(dataPoint)}
+    ${getEventType(dataPoint, dataTypes)}
 
     <div class="event__field-group  event__field-group--destination">
       <label class="event__label  event__type-output" for="event-destination-1">
@@ -91,7 +88,7 @@ const createEventForm = (
       </label>
       <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${dataPoint.destination}" list="destination-list-1">
       <datalist id="destination-list-1">
-        ${getDestinationTemplate()}
+        ${getDestinationTemplate(dataDestinations)}
       </datalist>
     </div>
 
@@ -116,20 +113,20 @@ const createEventForm = (
     : '<button class="event__reset-btn" type="reset">Delete</button><button class="event__rollup-btn" type="button"><span class="visually-hidden">Open event</span></button>'}
   </header>
   <section class="event__details">
-    ${getOffers(dataPoint) !== '' ?
+    ${getOffers(dataPoint, dataTypes) !== '' ?
     `<section class="event__section  event__section--offers">
       <h3 class="event__section-title  event__section-title--offers">Offers</h3>
       <div class="event__available-offers">
-          ${getOffers(dataPoint)}
+          ${getOffers(dataPoint, dataTypes)}
       </div>
     </section>` : '' }
     ${dataPoint.destinaiton ? '' : `<section class="event__section  event__section--destination">
       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-      <p class="event__destination-description">${getDestinationPhotos(dataPoint)[1]}</p>
+      <p class="event__destination-description">${getDestinationPhotos(dataPoint, dataDestinations)[1]}</p>
 
       <div class="event__photos-container">
         <div class="event__photos-tape">
-        ${getDestinationPhotos(dataPoint)[0]}
+        ${getDestinationPhotos(dataPoint, dataDestinations)[0]}
         </div>
       </div>
 
@@ -140,14 +137,16 @@ const createEventForm = (
 `;
 
 export default class EventForm {
-  constructor(point, isCreate = false) {
+  constructor(point, dataTypes, dataDestinations, isCreate = false) {
     this._element = null;
     this._point = point;
     this._isCreate = isCreate;
+    this._dataTypes = dataTypes;
+    this._dataDestinations = dataDestinations;
   }
 
   getTemplate() {
-    return createEventForm(this._point);
+    return createEventForm(this._point, this._dataTypes, this._dataDestinations);
   }
 
   getElement() {
