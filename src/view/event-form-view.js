@@ -1,3 +1,5 @@
+import {createListElement} from '../utils.js';
+
 const getTypes = (dataTypes) => {
   let typesTemplate = '';
   dataTypes.forEach((type) => {
@@ -70,11 +72,11 @@ const getDestinationPhotos = (dataPoint, dataDestinations) => {
   return [photosTemplate, destinaitonArray[0].description];
 };
 
-export const createEventForm = (
+const createEventForm = (
   dataPoint,
   dataTypes,
   dataDestinations,
-  isCreate,
+  isCreate = false,
 ) => `
 <form class="event event--edit" action="#" method="post">
   <header class="event__header">
@@ -133,3 +135,29 @@ export const createEventForm = (
   </section>
 </form>
 `;
+
+export default class EventForm {
+  constructor(point, dataTypes, dataDestinations, isCreate = false) {
+    this._element = null;
+    this._point = point;
+    this._isCreate = isCreate;
+    this._dataTypes = dataTypes;
+    this._dataDestinations = dataDestinations;
+  }
+
+  getTemplate() {
+    return createEventForm(this._point, this._dataTypes, this._dataDestinations);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createListElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
