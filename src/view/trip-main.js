@@ -1,4 +1,4 @@
-import {createElement} from '../utils.js';
+import AbstractView from './abstract.js';
 
 const MAX_COUNT_DESTINATION = 3;
 
@@ -31,25 +31,15 @@ const createTripMainInfo = (data) => {
   </section>`;
 };
 
-export default class TripMain {
+
+export default class TripMain extends AbstractView {
   constructor(points) {
-    this._element = null;
+    super();
     this._points = points;
   }
 
   getTemplate() {
     return createTripMainInfo(this._points);
   }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
-  }
 }
+
