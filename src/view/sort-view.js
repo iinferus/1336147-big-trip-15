@@ -1,4 +1,4 @@
-import {createElement} from '../utils.js';
+import AbstractView from './abstract.js';
 
 const createTripSort = () => (
   `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
@@ -8,7 +8,7 @@ const createTripSort = () => (
   </div>
 
   <div class="trip-sort__item  trip-sort__item--event">
-    <input id="sort-event" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-event" disabled>
+    <input id="sort-event" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-event">
     <label class="trip-sort__btn" for="sort-event">Event</label>
   </div>
 
@@ -23,31 +23,15 @@ const createTripSort = () => (
   </div>
 
   <div class="trip-sort__item  trip-sort__item--offer">
-    <input id="sort-offer" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-offer" disabled>
+    <input id="sort-offer" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-offer">
     <label class="trip-sort__btn" for="sort-offer">Offers</label>
   </div>
 </form>
 `
 );
 
-export default class TripSort {
-  constructor() {
-    this._element = null;
-  }
-
+export default class TripSort extends AbstractView {
   getTemplate() {
     return createTripSort();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

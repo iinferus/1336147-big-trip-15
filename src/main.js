@@ -41,18 +41,17 @@ const renderTripEvent = (tripListElement, trip, dataTypes, dataDestinations) => 
     }
   };
 
-  tripComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', () => {
+  tripComponent.setEditClickHandler(() => {
     replaceCardToForm();
     document.addEventListener('keydown', onEscKeyDown);
   });
 
-  tripEditComponent.getElement().querySelector('form').addEventListener('submit', (evt) => {
-    evt.preventDefault();
+  tripEditComponent.setFormSubmitHandler(() => {
     replaceFormToCard();
     document.removeEventListener('keydown', onEscKeyDown);
   });
 
-  tripEditComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', () => {
+  tripEditComponent.setEditClickHandler(() => {
     replaceFormToCard();
     document.removeEventListener('keydown', onEscKeyDown);
   });
@@ -67,7 +66,7 @@ const tripFilter = tripMain.querySelector('.trip-controls__filters');
 const tripList = new TripEventsListView().getElement();
 
 
-if (sortedPoints.length === 0) {
+if (!sortedPoints.length) {
   renderElement(tripEvents, new NoTripView().getElement(), RenderPosition.BEFOREEND);
 } else {
   renderElement(tripMain, new TripMain(sortedPoints).getElement(), RenderPosition.AFTERBEGIN);

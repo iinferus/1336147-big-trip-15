@@ -58,10 +58,10 @@ const renderElement = (container, element, place) => {
 };
 
 const createElement = (template) => {
-  const newElement = document.createElement('div'); // 1
+  const newElement = document.createElement('div');
   newElement.innerHTML = template;
 
-  return newElement.firstChild; // 3
+  return newElement.firstChild;
 };
 
 const createListElement = (template) => {

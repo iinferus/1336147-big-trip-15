@@ -1,4 +1,4 @@
-import {createListElement} from '../utils.js';
+import AbstractView from './abstract.js';
 
 const getTypes = (dataTypes) => {
   let typesTemplate = '';
@@ -77,14 +77,16 @@ const createEventForm = (
   dataTypes,
   dataDestinations,
   isCreate = false,
-) => `
-<form class="event event--edit" action="#" method="post">
+) => {
+  const {type, dateFrom, dateTo, basePrice, destinaiton} = dataPoint;
+  return `<li class="trip-events__item">
+  <form class="event event--edit" action="#" method="post">
   <header class="event__header">
     ${getEventType(dataPoint, dataTypes)}
 
     <div class="event__field-group  event__field-group--destination">
       <label class="event__label  event__type-output" for="event-destination-1">
-        ${dataPoint.type}
+        ${type}
       </label>
       <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${dataPoint.destination}" list="destination-list-1">
       <datalist id="destination-list-1">
@@ -94,10 +96,10 @@ const createEventForm = (
 
     <div class="event__field-group  event__field-group--time">
       <label class="visually-hidden" for="event-start-time-1">From</label>
-      <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dataPoint.dateFrom.format('DD/MM/YY HH:mm')}">
+      <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dateFrom.format('DD/MM/YY HH:mm')}">
       &mdash;
       <label class="visually-hidden" for="event-end-time-1">To</label>
-      <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dataPoint.dateTo.format('DD/MM/YY HH:mm')}">
+      <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dateTo.format('DD/MM/YY HH:mm')}">
     </div>
 
     <div class="event__field-group  event__field-group--price">
@@ -105,7 +107,7 @@ const createEventForm = (
         <span class="visually-hidden">Price</span>
         &euro;
       </label>
-      <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${dataPoint.basePrice}">
+      <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
     </div>
 
     <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -120,7 +122,7 @@ const createEventForm = (
           ${getOffers(dataPoint, dataTypes)}
       </div>
     </section>` : '' }
-    ${dataPoint.destinaiton ? '' : `<section class="event__section  event__section--destination">
+    ${destinaiton ? '' : `<section class="event__section  event__section--destination">
       <h3 class="event__section-title  event__section-title--destination">Destination</h3>
       <p class="event__destination-description">${getDestinationPhotos(dataPoint, dataDestinations)[1]}</p>
 
@@ -134,30 +136,41 @@ const createEventForm = (
 
   </section>
 </form>
-`;
+</li>`;};
 
-export default class EventForm {
+export default class EventForm extends AbstractView {
   constructor(point, dataTypes, dataDestinations, isCreate = false) {
-    this._element = null;
+    super();
     this._point = point;
     this._isCreate = isCreate;
     this._dataTypes = dataTypes;
     this._dataDestinations = dataDestinations;
+
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._editClickHandler = this._editClickHandler.bind(this);
   }
 
   getTemplate() {
     return createEventForm(this._point, this._dataTypes, this._dataDestinations);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createListElement(this.getTemplate());
-    }
-
-    return this._element;
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit();
   }
 
-  removeElement() {
-    this._element = null;
+  _editClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.editClick();
+  }
+
+  setFormSubmitHandler(callback) {
+    this._callback.formSubmit = callback;
+    this.getElement().querySelector('form').addEventListener('submit', this._formSubmitHandler);
+  }
+
+  setEditClickHandler(callback) {
+    this._callback.editClick = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._editClickHandler);
   }
 }
