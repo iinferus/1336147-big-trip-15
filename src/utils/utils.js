@@ -6,21 +6,16 @@ dayjs.extend(utc);
 dayjs.extend(minMax);
 dayjs.extend(duration);
 
-const RenderPosition = {
-  AFTERBEGIN: 'afterbegin',
-  BEFOREEND: 'beforeend',
-};
-
-const getRandomInteger = (a = 0, b = 1) => {
+export const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
   const upper = Math.floor(Math.max(a, b));
 
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
-const getRandomArrayElement = (elements) => (elements[getRandomInteger(0, elements.length - 1)]);
+export const getRandomArrayElement = (elements) => (elements[getRandomInteger(0, elements.length - 1)]);
 
-const getRandomMultipleArrayElement = (elements) => {
+export const getRandomMultipleArrayElement = (elements) => {
   const randomArrayNumber = getRandomInteger(1, elements.length - 1);
   for (let i = elements.length - 1; i > 0; i--) {
     const randomSort = Math.floor(Math.random() * (i + 1));
@@ -30,7 +25,7 @@ const getRandomMultipleArrayElement = (elements) => {
   return array;
 };
 
-const getDurationDates = (dateStart, dateFinish) => {
+export const getDurationDates = (dateStart, dateFinish) => {
   const diff = dateFinish.diff(dateStart);
   const daysCount = dayjs.duration(diff).format('DD');
   const hoursCount = dayjs.duration(diff).format('HH');
@@ -46,29 +41,13 @@ const getDurationDates = (dateStart, dateFinish) => {
   }
 };
 
-const renderElement = (container, element, place) => {
-  switch (place) {
-    case RenderPosition.AFTERBEGIN:
-      container.prepend(element);
-      break;
-    case RenderPosition.BEFOREEND:
-      container.append(element);
-      break;
-  }
+export const delay = (callback, ms) => {
+  let timer = 0;
+  return function() {
+    const context = this, args = arguments;
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      callback.apply(context, args);
+    }, ms || 0);
+  };
 };
-
-const createElement = (template) => {
-  const newElement = document.createElement('div');
-  newElement.innerHTML = template;
-
-  return newElement.firstChild;
-};
-
-const createListElement = (template) => {
-  const newElement = document.createElement('li');
-  newElement.innerHTML = template;
-
-  return newElement;
-};
-
-export {getRandomInteger, getRandomArrayElement, getRandomMultipleArrayElement, getDurationDates, createElement, RenderPosition, renderElement, createListElement};
