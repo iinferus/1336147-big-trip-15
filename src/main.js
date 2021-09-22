@@ -1,81 +1,101 @@
-import TripMain from './view/trip-main.js';
-import TripMenu from './view/menu-view.js';
-import TripEventsListView from './view/trip-events.js';
-import TripFilter from './view/filter-view.js';
-import TripSortView from './view/sort-view.js';
-import TripEventView from './view/trip-list-view.js';
-import EventFormView from './view/event-form-view.js';
-import NoTripView from './view/no-trip.js';
-import {createPoints} from './mock/point-mock.js';
-import {RenderPosition, renderElement} from './utils.js';
-import {createDestinations} from './mock/destination-mock.js';
-import {createTypes} from './mock/offer-mock.js';
+import SiteMenuView from './view/site-menu';
+import NewEventButtonView from './view/new-event-btn';
+import EventBoardPresenter from './presenter/event-board';
+import TripInfoPresenter from './presenter/trip-info';
+import FiltersPresenter from './presenter/filter';
+import StatisticsPresenter from './presenter/statistics';
+import EventsModel from './model/events';
+import FiltersModel from './model/filter';
+import {RenderPosition, render} from './utils/render';
+import {FilterType} from './utils/const';
+import {sortDay} from './utils/task';
+import {UpdateType, MenuItem} from './utils/const';
+import Api from './api.js';
 
-const sortedPoints = createPoints.sort((a, b) => {
-  if (a.dateFrom.diff(b.dateFrom) > 1) {
-    return 1;
-  }
-  if (a.dateFrom.diff(b.dateFrom) < 1) {
-    return -1;
-  }
-  return 0;
+const AUTHORIZATION = 'Basic kM4Kh4arSlrjo1s8i';
+const END_POINT = 'https://15.ecmascript.pages.academy/big-trip';
+const api = new Api(END_POINT, AUTHORIZATION);
+
+const eventsModel = new EventsModel();
+const filtersModel = new FiltersModel();
+
+api.getDestinations().then((destinations) => {
+  eventsModel.setDestinations(destinations);
 });
 
-const renderTripEvent = (tripListElement, trip, dataTypes, dataDestinations) => {
-  const tripComponent = new TripEventView(trip);
-  const tripEditComponent = new EventFormView(trip, dataTypes, dataDestinations);
+api.getOffers().then((offers) => {
+  eventsModel.setOffers(offers);
+});
 
-  const replaceCardToForm = () => {
-    tripListElement.replaceChild(tripEditComponent.getElement(), tripComponent.getElement());
-  };
+const pageBodyContainerElements = document.querySelectorAll('.page-body__container');
+const tripMain = pageBodyContainerElements[0].querySelector('.trip-main');
+const pageMainElement = pageBodyContainerElements[1];
+const tripEvents = document.querySelector('.trip-events');
+const tripNav = tripMain.querySelector('.trip-main__trip-controls');
 
-  const replaceFormToCard = () => {
-    tripListElement.replaceChild(tripComponent.getElement(), tripEditComponent.getElement());
-  };
+const tripInfoPresenter = new TripInfoPresenter(tripMain, eventsModel);
+const statisticsPresenter = new StatisticsPresenter(pageMainElement, eventsModel, pageBodyContainerElements);
+const filtersPresenter = new FiltersPresenter(tripNav, filtersModel, eventsModel);
+const boardPresenter = new EventBoardPresenter(tripEvents, eventsModel, filtersModel, api);
 
-  const onEscKeyDown = (evt) => {
-    if (evt.key === 'Escape' || evt.key === 'Esc') {
-      evt.preventDefault();
-      replaceFormToCard();
-      document.removeEventListener('keydown', onEscKeyDown);
-    }
-  };
+const siteMenuComponent = new SiteMenuView();
+const newEventButtonComponent = new NewEventButtonView();
 
-  tripComponent.setEditClickHandler(() => {
-    replaceCardToForm();
-    document.addEventListener('keydown', onEscKeyDown);
-  });
-
-  tripEditComponent.setFormSubmitHandler(() => {
-    replaceFormToCard();
-    document.removeEventListener('keydown', onEscKeyDown);
-  });
-
-  tripEditComponent.setEditClickHandler(() => {
-    replaceFormToCard();
-    document.removeEventListener('keydown', onEscKeyDown);
-  });
-
-  renderElement(tripListElement, tripComponent.getElement(), RenderPosition.BEFOREEND);
+const handleNewEventFormClose = () => {
+  newEventButtonComponent.getElement().disabled = false;
 };
 
-const tripMain = document.querySelector('.trip-main');
-const tripEvents = document.querySelector('.trip-events');
-const tripMenu = tripMain.querySelector('.trip-controls__navigation');
-const tripFilter = tripMain.querySelector('.trip-controls__filters');
-const tripList = new TripEventsListView().getElement();
+const handleSiteMenuClick = (menuItem) => {
+  switch (menuItem) {
+    case MenuItem.ADD_NEW_EVENT:
+      statisticsPresenter.destroy();
+      boardPresenter.destroy();
+      filtersModel.setFilter(UpdateType.RESET, FilterType.EVERYTHING);
+      boardPresenter.init();
+      boardPresenter.createEvent(handleNewEventFormClose);
+      newEventButtonComponent.getElement().disabled = true;
+      filtersPresenter.init();
+      siteMenuComponent.setMenuItem(MenuItem.TABLE);
+      break;
+    case MenuItem.TABLE:
+      statisticsPresenter.destroy();
+      boardPresenter.init();
+      filtersPresenter.init();
+      siteMenuComponent.setMenuItem(MenuItem.TABLE);
+      break;
+    case MenuItem.STATS:
+      boardPresenter.destroy();
+      statisticsPresenter.init();
+      filtersPresenter.init(true);
+      siteMenuComponent.setMenuItem(MenuItem.STATS);
+      break;
+  }
+};
 
+const renderControls = (isDisabledNewButton) => {
+  newEventButtonComponent.setDisabledState(isDisabledNewButton);
+  render(tripNav, siteMenuComponent, RenderPosition.BEFOREEND);
+  render(tripMain, newEventButtonComponent, RenderPosition.BEFOREEND);
+  siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
+  newEventButtonComponent.setMenuClickHandler(handleSiteMenuClick);
+};
 
-if (!sortedPoints.length) {
-  renderElement(tripEvents, new NoTripView().getElement(), RenderPosition.BEFOREEND);
-} else {
-  renderElement(tripMain, new TripMain(sortedPoints).getElement(), RenderPosition.AFTERBEGIN);
-  renderElement(tripEvents, tripList, RenderPosition.BEFOREEND);
-  renderElement(tripEvents, new TripSortView().getElement(), RenderPosition.AFTERBEGIN);
-  sortedPoints.forEach((trip) => {
-    renderTripEvent(tripList, trip, createTypes(), createDestinations());
+api.getDestinations()
+  .then((destinations) => {
+    eventsModel.setDestinations(destinations);
+  })
+  .then(() => api.getOffers())
+  .then((offers) => {
+    eventsModel.setOffers(offers);
+  })
+  .then(() => api.getEvents())
+  .then((events) => {
+    boardPresenter.init();
+    eventsModel.setEvents(UpdateType.INIT, events.sort(sortDay));
+    tripInfoPresenter.init();
+    filtersPresenter.init();
+    renderControls();
+  })
+  .catch(() => {
+    eventsModel.setEvents(UpdateType.INIT, []);
   });
-}
-
-renderElement(tripMenu, new TripMenu().getElement(), RenderPosition.BEFOREEND);
-renderElement(tripFilter, new TripFilter().getElement(), RenderPosition.BEFOREEND);

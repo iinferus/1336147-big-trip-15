@@ -1,4 +1,4 @@
-import AbstractView from './abstract.js';
+import AbstractView from './abstract';
 
 const MAX_COUNT_DESTINATION = 3;
 
@@ -6,18 +6,17 @@ const createTripMainInfo = (data) => {
   const title = [];
   if (data.length <= MAX_COUNT_DESTINATION) {
     data.forEach((element) => {
-      title.push(element.destination);
+      title.push(element.destination.name);
     });
   } else {
-    title.push(data[0].destination);
+    title.push(data[0].destination.name);
     title.push('...');
-    title.push(data[data.length - 1].destination);
+    title.push(data[data.length - 1].destination.name);
   }
   let price = 0;
   for (let i = 0; i < data.length; i++) {
-    price += data[i].basePrice;
+    price += Number(data[i].basePrice);
   }
-
   return `<section class="trip-main__trip-info  trip-info">
     <div class="trip-info__main">
       <h1 class="trip-info__title">${title.join(' &mdash; ')}</h1>
@@ -32,7 +31,7 @@ const createTripMainInfo = (data) => {
 };
 
 
-export default class TripMain extends AbstractView {
+export default class TripInfo extends AbstractView {
   constructor(points) {
     super();
     this._points = points;
