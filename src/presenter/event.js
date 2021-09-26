@@ -1,5 +1,5 @@
-import TripEventView from '../view/event';
-import EventFormView from '../view/event-edit';
+import TripEventView from '../view/trip-event';
+import EventFormView from '../view/event-form';
 import {RenderPosition, render, replace, remove} from '../utils/render';
 import {UserAction, UpdateType} from '../utils/const';
 
@@ -9,12 +9,12 @@ const Mode = {
   ABORTING: 'ABORTING',
 };
 
-export const State = {
+const State = {
   SAVING: 'SAVING',
   DELETING: 'DELETING',
 };
 
-export default class Event {
+class Event {
   constructor(eventListContainer, changeDate, changeMode) {
     this._eventListContainer = eventListContainer;
     this._changeData = changeDate;
@@ -153,7 +153,6 @@ export default class Event {
       UpdateType.MINOR,
       event,
     );
-    this._replaceFormToCard();
   }
 
   _handleFormCancel() {
@@ -169,3 +168,5 @@ export default class Event {
     );
   }
 }
+
+export {Event as default, State};

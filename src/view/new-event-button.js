@@ -3,7 +3,7 @@ import {MenuItem} from '../utils/const';
 
 const createNewEventButtonTemplate = () => '<button class="trip-main__event-add-btn  btn  btn--big  btn--yellow" type="button">New event</button>';
 
-export default class NewEventButton extends AbstractView {
+class NewEventButton extends AbstractView {
   constructor() {
     super();
 
@@ -29,3 +29,4 @@ export default class NewEventButton extends AbstractView {
   }
 }
 
+export {NewEventButton as default};

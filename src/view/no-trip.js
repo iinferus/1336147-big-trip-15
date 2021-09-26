@@ -3,7 +3,7 @@ import {NoEventMessage} from '../utils/const';
 
 const createNoTripTemplate = (filter) => `<p class="trip-events__msg">${NoEventMessage[filter.toUpperCase()]}</p>`;
 
-export default class TripFilter extends AbstractView {
+class NoTrip extends AbstractView {
   constructor(filter) {
     super();
     this._filter = filter;
@@ -13,3 +13,5 @@ export default class TripFilter extends AbstractView {
     return createNoTripTemplate(this._filter);
   }
 }
+
+export {NoTrip as default};

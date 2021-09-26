@@ -1,12 +1,11 @@
 import Abstract from '../view/abstract';
 
-export const RenderPosition = {
+const RenderPosition = {
   AFTERBEGIN: 'afterbegin',
   BEFOREEND: 'beforeend',
 };
 
-
-export const remove = (component) => {
+const remove = (component) => {
   if (component === null) {
     return;
   }
@@ -19,7 +18,7 @@ export const remove = (component) => {
   component.removeElement();
 };
 
-export const render = (container, child, place) => {
+const render = (container, child, place) => {
   if (container instanceof Abstract) {
     container = container.getElement();
   }
@@ -38,21 +37,14 @@ export const render = (container, child, place) => {
   }
 };
 
-export const createElement = (template) => {
+const createElement = (template) => {
   const newElement = document.createElement('div');
   newElement.innerHTML = template;
 
   return newElement.firstChild;
 };
 
-export const createListElement = (template) => {
-  const newElement = document.createElement('li');
-  newElement.innerHTML = template;
-
-  return newElement;
-};
-
-export const replace = (newChild, oldChild) => {
+const replace = (newChild, oldChild) => {
   if (oldChild instanceof Abstract) {
     oldChild = oldChild.getElement();
   }
@@ -70,7 +62,7 @@ export const replace = (newChild, oldChild) => {
   parent.replaceChild(newChild, oldChild);
 };
 
-export const updateItem = (items, update) => {
+const updateItem = (items, update) => {
   const index = items.findIndex((item) => item.id === update.id);
 
   if (index === -1) {
@@ -83,3 +75,5 @@ export const updateItem = (items, update) => {
     ...items.slice(index + 1),
   ];
 };
+
+export {updateItem, replace, createElement, render, remove, RenderPosition};

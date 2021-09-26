@@ -1,11 +1,11 @@
 import SiteMenuView from './view/site-menu';
-import NewEventButtonView from './view/new-event-btn';
+import NewEventButtonView from './view/new-event-button';
 import EventBoardPresenter from './presenter/event-board';
 import TripInfoPresenter from './presenter/trip-info';
-import FiltersPresenter from './presenter/filter';
+import FiltersPresenter from './presenter/filters';
 import StatisticsPresenter from './presenter/statistics';
 import EventsModel from './model/events';
-import FiltersModel from './model/filter';
+import FiltersModel from './model/filters';
 import {RenderPosition, render} from './utils/render';
 import {FilterType} from './utils/const';
 import {sortDay} from './utils/task';
@@ -80,6 +80,8 @@ const renderControls = (isDisabledNewButton) => {
   newEventButtonComponent.setMenuClickHandler(handleSiteMenuClick);
 };
 
+boardPresenter.init();
+
 api.getDestinations()
   .then((destinations) => {
     eventsModel.setDestinations(destinations);
@@ -90,12 +92,12 @@ api.getDestinations()
   })
   .then(() => api.getEvents())
   .then((events) => {
-    boardPresenter.init();
     eventsModel.setEvents(UpdateType.INIT, events.sort(sortDay));
     tripInfoPresenter.init();
     filtersPresenter.init();
-    renderControls();
   })
   .catch(() => {
     eventsModel.setEvents(UpdateType.INIT, []);
   });
+
+renderControls();

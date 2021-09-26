@@ -18,7 +18,7 @@ const getWeightForNullValue = (valueA, valueB) => {
   return null;
 };
 
-export const sortDay = (taskA, taskB) => {
+const sortDay = (taskA, taskB) => {
   const weight = getWeightForNullValue(taskA.dateFrom, taskB.dateFrom);
 
   if (weight !== null) {
@@ -28,7 +28,7 @@ export const sortDay = (taskA, taskB) => {
   return dayjs(taskA.dateFrom).diff(dayjs(taskB.dateFrom));
 };
 
-export const sortPrice = (taskA, taskB) => {
+const sortPrice = (taskA, taskB) => {
   const weight = getWeightForNullValue(taskA.basePrice, taskB.basePrice);
 
   if (weight !== null) {
@@ -38,13 +38,11 @@ export const sortPrice = (taskA, taskB) => {
   return taskA.basePrice < taskB.basePrice;
 };
 
-export const sortDurationTime = (taskA, taskB) => {
+const sortDurationTime = (taskA, taskB) => {
   const diffA = taskA.dateTo.diff(taskA.dateFrom);
   const diffB = taskB.dateTo.diff(taskB.dateFrom);
 
   return diffB > diffA;
 };
 
-export const isEventExpired = (date) => dayjs().isAfter(date, 'D');
-
-export const isEventUpcoming = (date) => dayjs().isBefore(date, 'D');
+export {sortDay, sortPrice, sortDurationTime};

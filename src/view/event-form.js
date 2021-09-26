@@ -159,7 +159,7 @@ const createEventForm = (
 </form>
 </li>`;};
 
-export default class EventForm extends SmartView {
+class EventForm extends SmartView {
   constructor(event, dataTypes, dataDestinations, isCreate = false) {
     super();
     this._event = event;
@@ -381,3 +381,5 @@ export default class EventForm extends SmartView {
     return data;
   }
 }
+
+export {EventForm as default};
