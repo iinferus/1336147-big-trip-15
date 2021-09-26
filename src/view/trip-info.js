@@ -2,26 +2,26 @@ import AbstractView from './abstract';
 
 const MAX_COUNT_DESTINATION = 3;
 
-const createTripMainInfo = (data) => {
+const createTripMainInfo = (events) => {
   const title = [];
-  if (data.length <= MAX_COUNT_DESTINATION) {
-    data.forEach((element) => {
+  if (events.length <= MAX_COUNT_DESTINATION) {
+    events.forEach((element) => {
       title.push(element.destination.name);
     });
   } else {
-    title.push(data[0].destination.name);
+    title.push(events[0].destination.name);
     title.push('...');
-    title.push(data[data.length - 1].destination.name);
+    title.push(events[events.length - 1].destination.name);
   }
   let price = 0;
-  for (let i = 0; i < data.length; i++) {
-    price += Number(data[i].basePrice);
-  }
+  events.forEach((event) => {
+    price += Number(event.basePrice);
+  });
   return `<section class="trip-main__trip-info  trip-info">
     <div class="trip-info__main">
       <h1 class="trip-info__title">${title.join(' &mdash; ')}</h1>
 
-      <p class="trip-info__dates">${data[0].dateFrom.format('D MMM')}&nbsp;&mdash;&nbsp;${data[data.length - 1].dateTo.format('D MMM')}</p>
+      <p class="trip-info__dates">${events[0].dateFrom.format('D MMM')}&nbsp;&mdash;&nbsp;${events[events.length - 1].dateTo.format('D MMM')}</p>
     </div>
 
     <p class="trip-info__cost">
@@ -30,8 +30,7 @@ const createTripMainInfo = (data) => {
   </section>`;
 };
 
-
-export default class TripInfo extends AbstractView {
+class TripInfo extends AbstractView {
   constructor(points) {
     super();
     this._points = points;
@@ -42,3 +41,4 @@ export default class TripInfo extends AbstractView {
   }
 }
 
+export {TripInfo as default};

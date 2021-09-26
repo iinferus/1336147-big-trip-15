@@ -3,7 +3,7 @@ import {remove, render} from '../utils/render.js';
 import {EVENT_TYPES} from '../utils/const';
 import { RenderPosition } from '../utils/render.js';
 
-export default class Statistics {
+class Statistics {
   constructor(statisticsContainer, eventsModel, pageBodyContainerElements) {
     this._statisticsContainer = statisticsContainer;
     this._eventsModel = eventsModel;
@@ -31,3 +31,5 @@ export default class Statistics {
       element.classList.add('page-body__container--no-statistics'));
   }
 }
+
+export {Statistics as default};

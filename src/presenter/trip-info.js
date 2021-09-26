@@ -2,7 +2,7 @@ import TripInfoView from '../view/trip-info';
 import { UpdateType } from '../utils/const';
 import {RenderPosition, render, remove} from '../utils/render';
 
-export default class TripInfo {
+class TripInfo {
   constructor(container, eventsModel) {
     this._container = container;
     this._eventsModel = eventsModel;
@@ -39,3 +39,5 @@ export default class TripInfo {
     this._render();
   }
 }
+
+export {TripInfo as default};

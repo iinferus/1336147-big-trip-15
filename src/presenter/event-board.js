@@ -1,5 +1,5 @@
 import TripEventsListView from '../view/trip-events';
-import TripSortView from '../view/sort-view';
+import TripSortView from '../view/trip-sort';
 import EventPresenter, {State as EventPresenterViewState} from './event';
 import EventNewPresenter from './event-new';
 import NoTripView from '../view/no-trip';
@@ -9,7 +9,7 @@ import {sortDay, sortPrice, sortDurationTime} from '../utils/task';
 import {FilterType, SortType, UserAction, UpdateType} from '../utils/const';
 import {filter} from '../utils/filter';
 
-export default class EventBoard {
+class EventBoard {
   constructor(boardContainer, eventsModel, filtersModel, api) {
     this._boardContainer = boardContainer;
     this._eventsModel = eventsModel;
@@ -50,6 +50,9 @@ export default class EventBoard {
     this._eventNewPresenter = new EventNewPresenter(this._listComponent, this._handleViewAction, this._dataTypes, this._dataDestinations);
     this._currentSortType = SortType.DAY;
     this._eventNewPresenter.init(callback);
+    if (this._getEvents().length === 0) {
+      this._renderEventsList();
+    }
   }
 
   _getEvents() {
@@ -223,3 +226,5 @@ export default class EventBoard {
     this._renderEventsList();
   }
 }
+
+export {EventBoard as default};

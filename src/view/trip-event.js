@@ -66,8 +66,7 @@ const createEvent = (trip) => {
 </li>
 `;};
 
-
-export default class TripEvent extends AbstractView {
+class TripEvent extends AbstractView {
   constructor(trip) {
     super();
     this._trip = trip;
@@ -101,3 +100,4 @@ export default class TripEvent extends AbstractView {
   }
 }
 
+export {TripEvent as default};

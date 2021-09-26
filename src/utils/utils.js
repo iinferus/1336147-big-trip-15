@@ -6,26 +6,7 @@ dayjs.extend(utc);
 dayjs.extend(minMax);
 dayjs.extend(duration);
 
-export const getRandomInteger = (a = 0, b = 1) => {
-  const lower = Math.ceil(Math.min(a, b));
-  const upper = Math.floor(Math.max(a, b));
-
-  return Math.floor(lower + Math.random() * (upper - lower + 1));
-};
-
-export const getRandomArrayElement = (elements) => (elements[getRandomInteger(0, elements.length - 1)]);
-
-export const getRandomMultipleArrayElement = (elements) => {
-  const randomArrayNumber = getRandomInteger(1, elements.length - 1);
-  for (let i = elements.length - 1; i > 0; i--) {
-    const randomSort = Math.floor(Math.random() * (i + 1));
-    [elements[i], elements[randomSort]] = [elements[randomSort], elements[i]];
-  }
-  const array = elements.slice(0, randomArrayNumber);
-  return array;
-};
-
-export const getDurationDates = (dateStart, dateFinish) => {
+const getDurationDates = (dateStart, dateFinish) => {
   const diff = dateFinish.diff(dateStart);
   const daysCount = dayjs.duration(diff).format('DD');
   const hoursCount = dayjs.duration(diff).format('HH');
@@ -36,18 +17,8 @@ export const getDurationDates = (dateStart, dateFinish) => {
   }
   if (hoursCount > 0) {
     return `${hoursCount}H ${minutesCount}M`;
-  } else {
-    return `${minutesCount}M`;
   }
+  return `${minutesCount}M`;
 };
 
-export const delay = (callback, ms) => {
-  let timer = 0;
-  return function() {
-    const context = this, args = arguments;
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      callback.apply(context, args);
-    }, ms || 0);
-  };
-};
+export {getDurationDates};

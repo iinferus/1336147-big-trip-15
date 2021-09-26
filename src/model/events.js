@@ -1,7 +1,7 @@
 import AbstractObserver from '../utils/abstract-observer';
 import dayjs from 'dayjs';
 
-export default class Events extends AbstractObserver {
+class Events extends AbstractObserver {
   constructor() {
     super();
     this._events = [];
@@ -115,3 +115,5 @@ export default class Events extends AbstractObserver {
     return adaptedEvent;
   }
 }
+
+export {Events as default};

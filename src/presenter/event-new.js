@@ -1,8 +1,8 @@
-import EventForm from '../view/event-edit';
+import EventForm from '../view/event-form';
 import {UserAction, UpdateType, BLANK_EVENT} from '../utils/const';
 import { remove, render, RenderPosition } from '../utils/render';
 
-export default class EventNew {
+class EventNew {
   constructor(eventListContainer, changeData, dataTypes, dataDestinations) {
     this._eventListContainer = eventListContainer;
     this._changeData = changeData;
@@ -86,3 +86,5 @@ export default class EventNew {
     }
   }
 }
+
+export {EventNew as default};

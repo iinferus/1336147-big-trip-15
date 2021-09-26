@@ -229,7 +229,7 @@ const createStatisticsTemplate = () => (
   </section>`
 );
 
-export default class Statistics extends SmartView {
+class Statistics extends SmartView {
   constructor(events, eventTypes) {
     super();
 
@@ -282,3 +282,5 @@ export default class Statistics extends SmartView {
     this._timeSpendChart = renderTimeSpendChart(timeCtx, this._data, this._eventTypes);
   }
 }
+
+export {Statistics as default};
