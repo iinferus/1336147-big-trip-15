@@ -2,6 +2,8 @@ import TripEventView from '../view/trip-event';
 import EventFormView from '../view/event-form';
 import {RenderPosition, render, replace, remove} from '../utils/render';
 import {UserAction, UpdateType} from '../utils/const';
+import {isOnline} from '../utils/common';
+import {toast} from '../utils/toast';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -130,6 +132,11 @@ class Event {
   }
 
   _handleEditClick() {
+    if (!isOnline()) {
+      this.setViewState(State.ABORTING);
+      toast('You can\'t edit event offline');
+      return;
+    }
     this._replaceCardToForm();
   }
 
@@ -148,6 +155,11 @@ class Event {
   }
 
   _handleFormSubmit(event) {
+    if (!isOnline()) {
+      toast('You can\'t save event offline');
+      this.setViewState(State.ABORTING);
+      return;
+    }
     this._changeData(
       UserAction.UPDATE_EVENT,
       UpdateType.MINOR,
@@ -161,6 +173,11 @@ class Event {
   }
 
   _handleDeleteClick(event) {
+    if (!isOnline()) {
+      toast('You can\'t delete event offline');
+      this.setViewState(State.ABORTING);
+      return;
+    }
     this._changeData(
       UserAction.DELETE_EVENT,
       UpdateType.MINOR,

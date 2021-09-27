@@ -240,6 +240,7 @@ class EventForm extends SmartView {
     this._setInnerHandlers();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setCancelClickHandler(this._callback.cancelClick);
+    this.setDeleteClickHandler(this._callback.deleteClick);
     this._setDatepicker();
   }
 
@@ -320,9 +321,11 @@ class EventForm extends SmartView {
   removeElement() {
     super.removeElement();
 
-    if (this._datepicker) {
-      this._datepicker.destroy();
-      this._datepicker = null;
+    if (this._datepickerStart && this._datepickerEnd) {
+      this._datepickerStart.destroy();
+      this._datepickerStart = null;
+      this._datepickerEnd.destroy();
+      this._datepickerEnd = null;
     }
   }
 

@@ -3,6 +3,9 @@ import AbstractView from './abstract';
 const MAX_COUNT_DESTINATION = 3;
 
 const createTripMainInfo = (events) => {
+  if (events.length === 0) {
+    return '<section class="trip-main__trip-info  trip-info"></section>';
+  }
   const title = [];
   if (events.length <= MAX_COUNT_DESTINATION) {
     events.forEach((element) => {
@@ -16,6 +19,9 @@ const createTripMainInfo = (events) => {
   let price = 0;
   events.forEach((event) => {
     price += Number(event.basePrice);
+    for (const offer of Object.values(event.offers)) {
+      price += Number(offer.price);
+    }
   });
   return `<section class="trip-main__trip-info  trip-info">
     <div class="trip-info__main">

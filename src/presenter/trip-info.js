@@ -7,36 +7,25 @@ class TripInfo {
     this._container = container;
     this._eventsModel = eventsModel;
 
+    this._tripInfoComponent = new TripInfoView(this._eventsModel.getEvents());
+
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._eventsModel.addObserver(this._handleModelEvent);
   }
 
-  _handleModelEvent(updateType) {
-    switch (updateType) {
-      case UpdateType.PATCH:
-        break;
-      case UpdateType.MINOR:
-        this._clearInfo();
-        this._render();
-        break;
-      case UpdateType.MAJOR:
-        this._clearInfo();
-        this._render();
-        break;
-    }
-  }
-
-  _render() {
-    this._infoElement = new TripInfoView(this._eventsModel.getEvents());
-    render(this._container, this._infoElement, RenderPosition.AFTERBEGIN);
-  }
-
-  _clearInfo() {
-    remove(this._infoElement);
-  }
-
   init() {
-    this._render();
+    remove(this._tripInfoComponent);
+    this._tripInfoComponent = new TripInfoView(this._eventsModel.getEvents());
+    render(this._container, this._tripInfoComponent, RenderPosition.AFTERBEGIN);
+  }
+
+  _handleModelEvent(updateType) {
+    if (updateType === UpdateType.MINOR
+      || updateType === UpdateType.MAJOR
+      || updateType === UpdateType.RESET
+      || updateType === UpdateType.INIT) {
+      this.init();
+    }
   }
 }
 

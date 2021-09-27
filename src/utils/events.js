@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration.js';
 dayjs.extend(duration);
 
-const calculateDuration = (event) => event.timeEnd - event.timeStart;
+const calculateDuration = (event) => event.dateTo - event.dateFrom;
 const calculateTimeSpend = (timeDifference) => {
   const countOfDay = dayjs.duration(timeDifference, 'millisecond').days();
   const countOfHour = dayjs.duration(timeDifference, 'millisecond').hours() % 24;

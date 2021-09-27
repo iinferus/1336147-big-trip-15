@@ -59,14 +59,18 @@ class EventBoard {
     this._filterType = this._filtersModel.getFilter();
     const events = this._eventsModel.getEvents();
     const filteredEvents = filter[this._filterType](events);
+    if (this._currentSortType === undefined) {
+      this._currentSortType = SortType.DAY;
+    }
 
     switch (this._currentSortType) {
+      case SortType.DAY:
+        return filteredEvents.sort(sortDay);
       case SortType.PRICE:
         return filteredEvents.sort(sortPrice);
       case SortType.TIME:
         return filteredEvents.sort(sortDurationTime);
     }
-    return filteredEvents.sort(sortDay);
   }
 
   _getDestinations() {
@@ -81,7 +85,6 @@ class EventBoard {
     if (this._currentSortType === sortType) {
       return;
     }
-
     this._currentSortType = sortType;
     this._clearBoard();
     this._renderBoard();
@@ -175,9 +178,7 @@ class EventBoard {
   }
 
   _renderEvents() {
-    this._getEvents()
-      .slice()
-      .forEach((trip) => this._renderEvent(trip));
+    this._getEvents().forEach((trip) => this._renderEvent(trip));
   }
 
   _renderLoading() {

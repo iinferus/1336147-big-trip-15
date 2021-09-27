@@ -10,22 +10,30 @@ import {RenderPosition, render} from './utils/render';
 import {FilterType} from './utils/const';
 import {sortDay} from './utils/task';
 import {UpdateType, MenuItem} from './utils/const';
-import Api from './api.js';
+import Api from './api/api.js';
+import Store from './api/store.js';
+import Provider from './api/provider.js';
+import {toast} from './utils/toast.js';
+import {isOnline} from './utils/common.js';
 
 const AUTHORIZATION = 'Basic kM4Kh4arSlrjo1s8i';
 const END_POINT = 'https://15.ecmascript.pages.academy/big-trip';
+const STORE_PREFIX = 'big-trip-localstorage';
+const STORE_VER = 'v15';
+const StoreName = {
+  EVENTS: `${STORE_PREFIX}-events-${STORE_VER}`,
+  DESTINATIONS: `${STORE_PREFIX}-destinations-${STORE_VER}`,
+  OFFERS: `${STORE_PREFIX}-offers-${STORE_VER}`,
+};
+
 const api = new Api(END_POINT, AUTHORIZATION);
+const eventsStore = new Store(StoreName.EVENTS, window.localStorage);
+const destinationsStore = new Store(StoreName.DESTINATIONS, window.localStorage);
+const offersStore = new Store(StoreName.OFFERS, window.localStorage);
+const apiWithProvider = new Provider(api, eventsStore, destinationsStore, offersStore);
 
 const eventsModel = new EventsModel();
 const filtersModel = new FiltersModel();
-
-api.getDestinations().then((destinations) => {
-  eventsModel.setDestinations(destinations);
-});
-
-api.getOffers().then((offers) => {
-  eventsModel.setOffers(offers);
-});
 
 const pageBodyContainerElements = document.querySelectorAll('.page-body__container');
 const tripMain = pageBodyContainerElements[0].querySelector('.trip-main');
@@ -36,7 +44,7 @@ const tripNav = tripMain.querySelector('.trip-main__trip-controls');
 const tripInfoPresenter = new TripInfoPresenter(tripMain, eventsModel);
 const statisticsPresenter = new StatisticsPresenter(pageMainElement, eventsModel, pageBodyContainerElements);
 const filtersPresenter = new FiltersPresenter(tripNav, filtersModel, eventsModel);
-const boardPresenter = new EventBoardPresenter(tripEvents, eventsModel, filtersModel, api);
+const boardPresenter = new EventBoardPresenter(tripEvents, eventsModel, filtersModel, apiWithProvider);
 
 const siteMenuComponent = new SiteMenuView();
 const newEventButtonComponent = new NewEventButtonView();
@@ -52,6 +60,11 @@ const handleSiteMenuClick = (menuItem) => {
       boardPresenter.destroy();
       filtersModel.setFilter(UpdateType.RESET, FilterType.EVERYTHING);
       boardPresenter.init();
+      if (!isOnline()) {
+        toast('You can\'t create new task offline');
+        siteMenuComponent.setMenuItem(MenuItem.TABLE);
+        break;
+      }
       boardPresenter.createEvent(handleNewEventFormClose);
       newEventButtonComponent.getElement().disabled = true;
       filtersPresenter.init();
@@ -82,22 +95,44 @@ const renderControls = (isDisabledNewButton) => {
 
 boardPresenter.init();
 
-api.getDestinations()
-  .then((destinations) => {
+let isInitialData = false;
+
+apiWithProvider.getInitialData()
+  .then((results) => {
+    const [destinations, offers] = results;
     eventsModel.setDestinations(destinations);
-  })
-  .then(() => api.getOffers())
-  .then((offers) => {
     eventsModel.setOffers(offers);
+    isInitialData = true;
   })
-  .then(() => api.getEvents())
+  .then(() => apiWithProvider.getEvents())
   .then((events) => {
     eventsModel.setEvents(UpdateType.INIT, events.sort(sortDay));
-    tripInfoPresenter.init();
-    filtersPresenter.init();
+    renderControls();
   })
   .catch(() => {
-    eventsModel.setEvents(UpdateType.INIT, []);
+    if (isInitialData) {
+      eventsModel.setEvents(UpdateType.INIT, []);
+      renderControls(!isInitialData);
+    } else {
+      eventsModel.setEvents(UpdateType.INIT, []);
+      renderControls(!isInitialData);
+      toast('Error loading data');
+    }
   });
 
-renderControls();
+tripInfoPresenter.init();
+filtersPresenter.init();
+boardPresenter.init();
+
+window.addEventListener('load', () => {
+  navigator.serviceWorker.register('/sw.js');
+});
+
+window.addEventListener('online', () => {
+  document.title = document.title.replace(' [offline]', '');
+  apiWithProvider.sync();
+});
+
+window.addEventListener('offline', () => {
+  document.title += ' [offline]';
+});

@@ -6,7 +6,7 @@ const createSortsRadio = (currentSortType) => {
   for (const value of Object.values(SortType)) {
     sortsTemplate += `
     <div class="trip-sort__item  trip-sort__item--${value}">
-      <input id="sort-${value}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${value}" ${value === currentSortType ? 'checked' : ''} >
+      <input id="sort-${value}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${value}" ${value === currentSortType ? 'checked' : ''}>
       <label class="trip-sort__btn" for="sort-${value}" data-sort-type="${value}">${value}</label>
     </div>`;
   }
